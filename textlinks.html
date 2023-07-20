@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Plan Text Link Extractor</title>
+  <style>
+    body {
+      padding: 5px;
+    }
+    #input {
+      width: 99%;
+      min-width: 300px;
+      min-height: 300px;
+    }
+    #status {
+      margin: 5px auto;
+      padding: 15px;
+    }
+    #output {
+      border: 1px dotted #333;
+      background: #333;
+      color: #ccc;
+      margin: 5px auto;
+      padding: 15px;
+      max-height: 300px;
+      overflow: auto;
+      font-family: monospace;
+    }
+  </style>
+  <script>
+    const linkRe = new RegExp('https?://[^\\s\'\"><]+\\.[^\\s\'\"><]+', 'ig')
+    const linksFromText = text => {
+      let links = new Set()
+      for(const m of text.matchAll(linkRe)) {
+        links.add(m[0].replace(/[,;.)]+$/g, ''))
+      }
+      return [...links]
+    }
+  </script>
+  <script>
+    const extractLinks = e => {
+      let links = linksFromText(e.target.value)
+      status.innerText = `Unique Links: ${links.length}\nWayback Machine Links: ${links.filter(l => l.includes('web.archive.org')).length}`
+      output.innerText = links.join('\n')
+    }
+  </script>
+</head>
+
+<body>
+  <h1>Plan Text Link Extractor</h1>
+  <p>Paste or type plain text below to extract links from it (content will be analyzed in the browser itself and will not be sent to any server).</p>
+  <textarea id="input" placeholder="Paste plain text with links here..."></textarea>
+  <div id="status"></div>
+  <div id="output"></div>
+  <script>
+    const input = document.getElementById('input')
+    const status = document.getElementById('status')
+    const output = document.getElementById('output')
+    input.addEventListener('input', extractLinks)
+  </script>
+</body>
+
+</html>
