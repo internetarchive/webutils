@@ -4,71 +4,21 @@
 <head>
   <meta charset="utf-8">
   <title>PDF Link Extractor</title>
-  <style>
-    body {
-      padding: 5px;
-    }
-    #status {
-      margin: 5px auto;
-      padding: 15px;
-    }
-    #output, #wbmurl {
-      border: 1px dotted #333;
-      background: #333;
-      color: #ccc;
-      margin: 5px auto;
-      padding: 15px;
-      max-height: 300px;
-      overflow: auto;
-      font-family: monospace;
-    }
-  </style>
-  <script src="pdf.js"></script>
-  <script>
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'pdf.worker.js'
-    const linkRe = new RegExp('https?://[^\\s\'\"><]+\\.[^\\s\'\"><]+', 'ig')
-    const linksFromPDF = async data => {
-      let links = new Set()
-      const pdf = await pdfjsLib.getDocument(data).promise
-      for(let i=1; i<=pdf.numPages; i++) {
-        let page = await pdf.getPage(i)
-        let ant = await page.getAnnotations()
-        ant.map(a => a.url).filter(l => l && l.startsWith('http')).forEach(e => links.add(e))
-        if(txtlink.checked) {
-          let txt = await page.getTextContent()
-          for(const m of txt.items.map(token => token.str).join(' ').matchAll(linkRe)) {
-            links.add(m[0].replace(/[,;.)]+$/g, ''))
-          }
-        }
-      }
-      return [...links]
-    }
-  </script>
-  <script>
-    const fileSelectHandler = async e => {
-      const f = e.target.files[0]
-      if(f.type != 'application/pdf') {
-        output.innerText = 'Please select a PDF file!'
-        return
-      }
-      output.innerText = 'Processing PDF...'
-      const reader = new FileReader()
-      reader.onload = async () => {
-        let links = await linksFromPDF(new Uint8Array(reader.result))
-        let wbmlinks = links.filter(l => l.includes('web.archive.org'))
-        let otrlinks = links.filter(l => !l.includes('web.archive.org'))
-        status.innerText = `File Name: ${f.name}\nTotal Unique Links: ${links.length}\nWayback Machine Links: ${wbmlinks.length}\nNon-WBM Links: ${otrlinks.length}`
-        output.innerText = otrlinks.join('\n')
-        wbmurl.innerText = wbmlinks.join('\n')
-      }
-      reader.readAsArrayBuffer(f)
-    }
-  </script>
+  <link rel="stylesheet" href="styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.min.js"
+    integrity="sha512-9Wd08apcJEwm8g3lBTg1UW/njdN0iuuOVWKpyinK3uA7ISAE5PmEZ4y8bZYTXVOE3tlt7aFlCBBLmLt5cUxe2Q=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.8.162/pdf.worker.min.js"
+    integrity="sha512-kYruxZBxGQJy6pFwz9JVe6FCgCZEPPvxC3eoy4A+fCMWcSGqPxxGC7M1S6eyXCBfm/4d7l4cf8XNoULZQQ+MtQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
 </head>
 
 <body>
   <h1>PDF Link Extractor</h1>
-  <p>Select a PDF file to extract links from it (selected file will be analyzed in the browser itself and will not be sent to any server).</p>
+  <p>Select a PDF file to extract links from it (selected file will be analyzed in the browser itself and will not be
+    sent to any server).</p>
   <input type="file" id="file" name="file" accept="application/pdf" />
   <br />
   <input type="checkbox" id="txtlink" />
@@ -76,14 +26,9 @@
   <div id="status"></div>
   <div id="output">Waiting for a PDF file...</div>
   <div id="wbmurl"></div>
-  <script>
-    const input = document.getElementById('file')
-    const txtlink = document.getElementById('txtlink')
-    const status = document.getElementById('status')
-    const output = document.getElementById('output')
-    const wbmurl = document.getElementById('wbmurl')
-    input.addEventListener('change', fileSelectHandler, false)
-  </script>
+
+  <!-- <script src="extractLinks.js"></script> -->
+  <script src="myExtractor.js"></script>
 </body>
 
 </html>
