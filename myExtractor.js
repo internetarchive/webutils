@@ -6,7 +6,12 @@ const wbmurl = document.getElementById("wbmurl");
 const linksFromPDF = async (data) => {
     let links = new Set();
     const pdf = await pdfjsLib.getDocument(data).promise;
+
     // parse through the pdf
+
+    // Plan is to replace all line feeds with <br/>
+    // write a regex that handles the appearnce of the above tag in a http string
+    // https://github.com/metachris/pdfx/blob/master/pdfx/extractor.py Using this file as a base ref
 };
 const fileSelectHandler = async (e) => {
     const f = e.target.files[0];
