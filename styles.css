@@ -1,0 +1,20 @@
+body {
+  padding: 5px;
+}
+
+#status {
+  margin: 5px auto;
+  padding: 15px;
+}
+
+#output,
+#wbmurl {
+  border: 1px dotted #333;
+  background: #333;
+  color: #ccc;
+  margin: 5px auto;
+  padding: 15px;
+  max-height: 300px;
+  overflow: auto;
+  font-family: monospace;
+}
